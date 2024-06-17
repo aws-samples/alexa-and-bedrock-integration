@@ -1,17 +1,17 @@
 import boto3
+import os
 
 # Inicializar clientes da AWS
 glue_client = boto3.client('glue')
 
-def lambda_handler(event, context):
+# Obter o nome do Crawler do evento
+crawler_name = os.environ['crawler']
 
-    # Obter o nome do Crawler do evento
-    crawler_name = "GlueCrawler"
-    
+def lambda_handler(event, context):
     try:
         # Iniciar o Crawler
         glue_client.start_crawler(
-            Names=[crawler_name]
+            Name=crawler_name
         )
         
         print(f"Crawler {crawler_name} iniciado com sucesso.")
