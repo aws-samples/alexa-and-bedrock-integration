@@ -1,0 +1,164 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Alexa and Bedrock integration
+
+Parameters:
+  SkillID:
+    Type: String
+    Description: ID da Skill que irá interagir com a função Lambda
+
+Resources:
+  DataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${AWS::Region}-${AWS::StackName}-raw-data"
+      
+  OutputAthenaBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${AWS::Region}-${AWS::StackName}-output-athena-data"
+
+  GlueDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: 's3'
+
+  GlueCrawler:
+    Type: AWS::Glue::Crawler
+    Properties:
+      Role: !GetAtt CrawlerRole.Arn
+      DatabaseName: !Ref GlueDatabase
+      Targets:
+        S3Targets:
+          - Path: !Sub 's3://${DataBucket}'
+
+  CrawlerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - glue.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
+      Policies:
+        - PolicyName: S3DataAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              Effect: Allow
+              Action:
+                - 's3:GetObject'
+                - 's3:PutObject'
+              Resource:
+                - !GetAtt DataBucket.Arn
+
+  TriggerCrawlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/trigger-crawler/
+      Handler: app.lambda_handler
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.9
+      Events:
+        ObjectCreated:
+          Type: S3
+          Properties:
+            Bucket: !Ref DataBucket
+            Events: s3:ObjectCreated:*
+
+  TriggerCrawlerFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt TriggerCrawlerFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
+      SourceArn: !GetAtt DataBucket.Arn
+
+  AlexaSkillFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/alexa-skill/
+      Handler: app.handler
+      Runtime: python3.9
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        AlexaTrigger:
+          Type: AlexaSkill
+          SkillId: !Ref SkillID
+      Environment:
+        Variables:
+          database: !Ref GlueDatabase
+          output_bucket: !Ref OutputAthenaBucket
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: TriggerCrawlerPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - glue:StartCrawler
+                Resource: 
+                  - !Sub 'arn:aws:glue:${AWS::Region}:${AWS::AccountId}:crawler/GlueCrawler'
+        - PolicyName: QueryAthenaPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - athena:StartQueryExecution
+                  - athena:GetQueryExecution
+                  - athena:GetQueryResults
+                Resource:
+                  - !Sub 'arn:aws:athena:${AWS::Region}:${AWS::AccountId}:workgroup/primary'
+                  - !Sub 'arn:aws:athena:${AWS::Region}:${AWS::AccountId}:datacatalog/${GlueDatabase}'
+        - PolicyName: BedrockPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'bedrock:InvokeModel'
+                Resource:
+                  - 'arn:aws:bedrock:*::foundation-model/anthropic.claude-3-haiku-20240307-v1:0'
+                  - 'arn:aws:bedrock:*::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0'
+        - PolicyName: S3DataAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              Effect: Allow
+              Action:
+                - 's3:GetObject'
+                - 's3:PutObject'
+              Resource:
+                - !Sub 'arn:aws:s3:::${AWS::Region}-${AWS::StackName}-raw-data'
+                - !Sub 'arn:aws:s3:::${AWS::Region}-${AWS::StackName}-output-athena-data'
+
+Outputs:
+  BucketName:
+    Value: !Ref DataBucket
+    Description: Nome do bucket S3 para armazenar dados
+  AlexaSkillArn:
+    Value: !GetAtt AlexaSkillFunction.Arn
+    Description: Arn da Função Lambda que deve ser configurada na Skill da Alexa
