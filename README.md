@@ -36,8 +36,8 @@ Before start, you will need:
 
 ### Demo walkthrough
 
-1. Clone the project to you computer
-2. When you will work with the CSV files, use logical names in the columns, so if you need change the header line in the CSV files
+1. Clone the project to your computer
+2. When you will work with the CSV files, use logical names in the columns, so change the header line in the CSV files
 3. Edit the [context file](./src/lambda/alexa-skill/resources/context.txt) to reflect your database structure (tables, columns and keys following the [Anthropic documentation](https://docs.anthropic.com/en/prompt-library/sql-sorcerer)
 4. Go to the Alexa Developer console and create an Alexa Skill, choose a name for the skill and this name will be the invocation word for your skill. Select a **Custom Model** and for Hosting service choose **Provision your own**. After created the skill, go to skill home and in **Interaction Model\JSON Editor** copy and paste the content of [this template for your Skill](./alexa/skill.json). You can check [Alexa Developer Documentation](https://developer.amazon.com/en-US/docs/alexa/custom-skills/steps-to-build-a-custom-skill.html).
 5. In the Alexa Developer console go to **Endpoint\Your Skill ID** and get the **Skill ID** to use as a param to Deploy the solution following the [sample](./src/README.md).
