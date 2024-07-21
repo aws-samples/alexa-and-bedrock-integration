@@ -26,7 +26,7 @@ and orchestrate the execution of that query using database services, ultimately 
 
 ## Requirements
 
-You will need:
+Before start, you will need:
 
 - [an Alexa account](https://alexa.amazon.com/)
 - [an Alexa Skill](https://developer.amazon.com/alexa/console/ask)
