@@ -48,10 +48,12 @@ You will need:
 
 ### IMPORTANT NOTES
 
-Check the database structure and update the context file, this file will be deployed inside the Skill Lambda function, to edit this file, use an IDE like VSCode and after change run **sam build && sam deploy** to update the file in Lambda function. 
-Remember to change the CSV header line with **LOGICAL** names, for example, in a column with the Student ID identified by "id_stds", replace to "STUDENTS_ID".
-Check the decimal numbers separator, replace comma (,) to dot (.). 
-
+<ul>a) Check the database structure and update the context file, this file will be deployed inside the Skill Lambda function, to edit this file, use an IDE like VSCode and after change run **sam build && sam deploy** to update the file in Lambda function. 
+<br><br>
+b) Remember to change the CSV header line with **LOGICAL** names, for example, in a column with the Student ID identified by "id_stds", replace to "STUDENTS_ID".
+<br><br>
+c) Check the decimal numbers separator, replace comma ( , ) to dot ( . ). 
+</ul>
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
