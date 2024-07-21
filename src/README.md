@@ -2,7 +2,7 @@
 
 ## Build & Deploy
 
-# SET THE SKILL ID NUMBER AND THE REGION
+Before run the follow commands change the **SkillID** and check the **Region**
 
 ```bash
 cd src/
