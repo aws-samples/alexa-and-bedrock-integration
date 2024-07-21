@@ -46,6 +46,12 @@ You will need:
 9. Upload the CSV to S3 Bucket (you can find the Bucket name at the SAM output). Inside the S3 bucket, create one folder per CSV file.
 11. Test the Skill.
 
+### IMPORTANT NOTES
+
+Check the database structure and update the context file, this file will be deployed inside the Skill Lambda function, to edit this file, use an IDE like VSCode and after change run **sam build && sam deploy** to update the file in Lambda function. 
+Remember to change the CSV header line with **LOGICAL** names, for example, in a column with the Student ID identified by "id_stds", replace to "STUDENTS_ID".
+Check the decimal numbers separator, replace comma (,) to dot (.). 
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
