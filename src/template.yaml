@@ -139,9 +139,15 @@ Resources:
                   - athena:StartQueryExecution
                   - athena:GetQueryExecution
                   - athena:GetQueryResults
+                  - glue:GetDatabase
+                  - glue:GetTables
+                  - glue:GetPartitions
                 Resource:
                   - !Sub "arn:aws:athena:${AWS::Region}:${AWS::AccountId}:workgroup/primary"
                   - !Sub "arn:aws:athena:${AWS::Region}:${AWS::AccountId}:datacatalog/${GlueDatabase}"
+                  - !Sub "arn:aws:glue:${AWS::Region}:${AWS::AccountId}:catalog"
+                  - !Sub "arn:aws:glue:${AWS::Region}:${AWS::AccountId}:database/${GlueDatabase}"
+                  - !Sub "arn:aws:glue:${AWS::Region}:${AWS::AccountId}:table/${GlueDatabase}/*"
         - PolicyName: BedrockPolicy
           PolicyDocument:
             Version: "2012-10-17"
