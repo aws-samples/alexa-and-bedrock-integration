@@ -135,7 +135,7 @@ class ConsultarDadosIntentHandler(AbstractRequestHandler):
         
     def get_context_file(self):
         # Construir o caminho completo para o arquivo context.txt
-        file_path = os.path.join(os.getcwd(), 'resource', 'context.txt')
+        file_path = os.path.join(os.getcwd(), 'resources', 'context.txt')
     
         try:
             # Lê o conteúdo do arquivo context.txt

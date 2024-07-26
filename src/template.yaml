@@ -14,12 +14,12 @@ Resources:
   DataBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${AWS::Region}-${AWS::StackName}-raw-data"
+      BucketName: !Sub "${AWS::Region}-${AWS::AccountId}-raw-data"
 
   OutputAthenaBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${AWS::Region}-${AWS::StackName}-output-athena-data"
+      BucketName: !Sub "${AWS::Region}-${AWS::AccountId}-output-athena-data"
 
   GlueDatabase:
     Type: AWS::Glue::Database
@@ -70,6 +70,7 @@ Resources:
       Handler: app.lambda_handler
       Role: !GetAtt LambdaRole.Arn
       Runtime: python3.9
+      Timeout: 15
       Events:
         ObjectCreated:
           Type: S3
@@ -96,13 +97,14 @@ Resources:
       Handler: app.handler
       Runtime: python3.9
       Role: !GetAtt LambdaRole.Arn
+      Timeout: 15
       Events:
         AlexaTrigger:
           Type: AlexaSkill
           SkillId: !Ref SkillID
       Environment:
         Variables:
-          database: !Ref GlueDatabase
+          glue_database: !Ref GlueDatabase
           output_bucket: !Ref OutputAthenaBucket
 
   LambdaRole:
@@ -158,9 +160,14 @@ Resources:
               Action:
                 - "s3:GetObject"
                 - "s3:PutObject"
+                - "s3:ListBucket"
+                - "s3:GetObjectVersion"
+                - "s3:GetBucketLocation"
               Resource:
-                - !Sub "arn:aws:s3:::${AWS::Region}-${AWS::StackName}-raw-data"
-                - !Sub "arn:aws:s3:::${AWS::Region}-${AWS::StackName}-output-athena-data"
+                - !Sub "arn:aws:s3:::${AWS::Region}-${AWS::AccountId}-raw-data"
+                - !Sub "arn:aws:s3:::${AWS::Region}-${AWS::AccountId}-raw-data/*"
+                - !Sub "arn:aws:s3:::${AWS::Region}-${AWS::AccountId}-output-athena-data"
+                - !Sub "arn:aws:s3:::${AWS::Region}-${AWS::AccountId}-output-athena-data/*"
 
 Outputs:
   BucketName:
