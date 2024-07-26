@@ -4,13 +4,13 @@ Generative AI is based on large foundation models trained on vast data, capable 
 audio, code, and more. However, the data may be outdated or lack context, and the models struggle with structured
 data and deterministic responses. This can lead to hallucinations, where the model generates outputs not grounded
 in input data or factual knowledge. For example, when summing values in a table, the model may "invent" random or
-inconsistent numbers instead of performing calculations correctly. 
+inconsistent numbers instead of performing calculations correctly.
 
-This inability to interpret rows, columns, and cells adequately, along with complex relationships, can lead to 
-errors in identifying maximum, minimum, and other mathematical operations. Hallucination and imprecision issues 
-are critical for sensitive data like financial, medical, or scientific information, compromising the reliability 
-of AI-based applications. One approach to address hallucinations when answering questions with structured data 
-context is to use models to generate SQL queries based on natural language input instead of directly interpreting 
+This inability to interpret rows, columns, and cells adequately, along with complex relationships, can lead to
+errors in identifying maximum, minimum, and other mathematical operations. Hallucination and imprecision issues
+are critical for sensitive data like financial, medical, or scientific information, compromising the reliability
+of AI-based applications. One approach to address hallucinations when answering questions with structured data
+context is to use models to generate SQL queries based on natural language input instead of directly interpreting
 tables and performing operations.
 
 This sample is a walk through of scripts that were made to quickly setup a Alexa Skill sample to integrate with LLM
@@ -33,6 +33,7 @@ Before start, you will need:
 - CSV database files (sample files can found [here](https://moduloextratorpnp.mec.gov.br/))
 - [AWS CLI](https://docs.aws.amazon.com/pt_br/cli/latest/userguide/getting-started-install.html)
 - [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)
+- [Manage Amazon Bedrock model access](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html)
 
 ### Demo walkthrough
 
@@ -43,8 +44,8 @@ Before start, you will need:
 5. In the Alexa Developer console go to **Endpoint\Your Skill ID** and get the **Skill ID** to use as a param to Deploy the solution following the [sample](./src/README.md).
 6. After deploy the sample, get the **AlexaSkillFunction ARN** in the SAM script output and go back to Alexa Developer console to change the <b>AWS Lambda ARN</b> in **Endpoint\Default Region**.
 7. Save the skill and click on **Build skill**.
-9. Upload the CSV to S3 Bucket (you can find the Bucket name at the SAM output). Inside the S3 bucket, create one folder per CSV file.
-11. Test the Skill.
+8. Upload the CSV to S3 Bucket (you can find the Bucket name at the SAM output). Inside the S3 bucket, create one folder per CSV file.
+9. Test the Skill.
 
 ### IMPORTANT NOTES
 
@@ -54,6 +55,7 @@ b) Remember to change the CSV header line with **LOGICAL** names, for example, i
 <br><br>
 c) Check the decimal numbers separator, replace comma ( , ) to dot ( . ). 
 </ul>
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
