@@ -14,8 +14,8 @@ context is to use models to generate SQL queries based on natural language input
 tables and performing operations.
 
 This sample is a walk through of scripts that were made to quickly setup a Alexa Skill sample to integrate with LLM
-in Amazon Bedrock. The users can have insights from database files using Natural Languange. This sample use AWS Glue
-and AWS Athena to query the data storaged in Amazon S3. The LLM from Anthropic has a library of prompts, with various
+in Amazon Bedrock. The users can have insights from database files using Natural Language. This sample use AWS Glue
+and AWS Athena to query the data storage in Amazon S3. The LLM from Anthropic has a library of prompts, with various
 examples for different use cases, including the [SQL Sorcerer](https://docs.anthropic.com/en/prompt-library/sql-sorcerer)
 prompt for generating SQL queries. With this approach, it is possible to generate SQL code from natural language
 and orchestrate the execution of that query using database services, ultimately generating a user-friendly response for the end-user.
